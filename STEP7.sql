@@ -59,8 +59,12 @@ GROUP BY p.id, p.product_name
 ORDER BY sales_amount DESC;
 
 -- 11
-SELECT * FROM users
-WHERE age >= 20;
+SELECT *
+FROM users
+WHERE id NOT IN (
+    SELECT DISTINCT user_id
+    FROM orders
+);
 
 -- 12
 SELECT order_id
@@ -69,12 +73,16 @@ GROUP BY order_id
 HAVING COUNT(DISTINCT product_id) >= 2;
 
 -- 13
-SELECT DISTINCT u.name
+SELECT DISTINCT
+    u.name
 FROM users u
-JOIN orders o ON u.id = o.user_id
-JOIN order_items oi ON o.id = oi.order_id
-JOIN products p ON oi.product_id = p.id
-WHERE (p.price * oi.quantity) >= 10000;
+JOIN orders o
+    ON u.id = o.user_id
+JOIN order_items oi
+    ON o.id = oi.order_id
+JOIN products p
+    ON oi.product_id = p.id
+WHERE p.product_name = 'テレビ';
 
 -- 14
 SELECT o.order_date, u.name, p.product_name,
@@ -154,7 +162,7 @@ SET price = price * 1.10;
 -- 27
 UPDATE orders
 SET order_date = '2024-05-01'
-WHERE order_date <= '2024-05-31';
+WHERE order_date < '2024-05-01';
 
 -- 28
 DELETE FROM users
